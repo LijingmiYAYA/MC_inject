@@ -12,8 +12,6 @@ typedef void(*OriginalFuncType)(void*);
 extern OriginalFuncType g_originalMessageBoxW;
 typedef void(*Json_MinHook)(void*,void*,int);
 typedef void*(*player_message)(void*, void**);
-typedef void* (*xuid_init_addr)(void*, void*,void*, void*);
-typedef void* (*xuid_join_addr)(void*, void*, void*,void*);
 
 extern Json_MinHook g_json_ret;
 extern player_message g_player_message;
@@ -48,21 +46,20 @@ namespace Hook {
     void Copy_Json(void* c1, void* json, int c2);
     std::wstring utf8_to_wstring(const std::string& str);
     void Copy_Esc_this(void* e_ehis, void* can);
-    void* BanIf(void* c1, void** messageaddr);
-}//45 33 C0 48 8D 54 24 ?? 48 8B CB E8 ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 48 8D 97 
 
 namespace throttler {
     static std::chrono::steady_clock::time_point lastRun = std::chrono::steady_clock::now() - std::chrono::seconds(10);
-    static int threshold_ms = 500;  // 5 Ãë
+    static int threshold_ms = 500;  // 5 ç§’
 
-    // ·µ»Ø true ±íÊ¾¡°¿ÉÒÔÖ´ĞĞ¡±
+    // è¿”å› true è¡¨ç¤ºâ€œå¯ä»¥æ‰§è¡Œâ€
     inline bool CanRunNow() {
         auto now = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastRun).count();
         if (elapsed >= threshold_ms) {
-            lastRun = now;  // ¸üĞÂÊ±¼ä
+            lastRun = now;  // æ›´æ–°æ—¶é—´
             return true;
         }
         return false;
     }
+
 }
