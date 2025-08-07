@@ -715,9 +715,6 @@ void ZFun(){
     Send_addr = Hook::FindPatternInMainModule("45 33 C0 48 8D 54 24 ?? 48 8B CB E8 ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 48 8D 97 ");
     Send_addr = Hook::ResolveCallTarget(Send_addr, { 0x8, 3, 5, 3, 5, 3, 4, 3, 4 });
     Hook_json_addr = Hook::FindPatternInMainModule("4C 8B DC 55 41 57 49 8D AB");
-    xuid = Hook::FindPatternInMainModule("CC CC CC 48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 4D 8B E0 4C 89 ?? ?? 4C 8B F1")+3;
-    init_Xuid = Hook::FindPatternInMainModule("4C 8B F8 49 8B 8E ?? ?? ?? ?? 48 8B ?? 48 8B ?? 48 8B ?? ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 4C 8B C6 48 8D 95 ?? ?? ?? ??");
-    init_Xuid = Hook::ResolveCallTarget(init_Xuid,{ 0x3,0x3,0x4,0x6,0x3,0x4,0x6,0x6,0x4,0x3 });
     
 
     //Minecraft.Windows.exe+1C891A1+3+5+3+6
@@ -826,4 +823,5 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }
+
 
