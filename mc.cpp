@@ -10,22 +10,15 @@
 using Clock = std::chrono::steady_clock;
 using TimePoint = Clock::time_point;
 
-constexpr size_t MAX_MESSAGES = 10;                   // ÏŞÖÆ£º×î¶à·¢ÑÔ´ÎÊı
-constexpr std::chrono::seconds TIME_WINDOW(6);      // ÏŞÖÆ£º¶àÉÙÃëÄÚ²»ÄÜ·¢Ì«¶à
-constexpr std::chrono::minutes CLEANUP_THRESHOLD(5); // ÇåÀí£º5·ÖÖÓÃ»·¢ÑÔ¾ÍÇå³ı
-constexpr std::chrono::seconds CLEANUP_INTERVAL(30); // Ã¿30Ãë´¥·¢Ò»´ÎÇåÀí
+constexpr size_t MAX_MESSAGES = 10;                   // é™åˆ¶ï¼šæœ€å¤šå‘è¨€æ¬¡æ•°
+constexpr std::chrono::seconds TIME_WINDOW(6);      // é™åˆ¶ï¼šå¤šå°‘ç§’å†…ä¸èƒ½å‘å¤ªå¤š
+constexpr std::chrono::minutes CLEANUP_THRESHOLD(5); // æ¸…ç†ï¼š5åˆ†é’Ÿæ²¡å‘è¨€å°±æ¸…é™¤
+constexpr std::chrono::seconds CLEANUP_INTERVAL(30); // æ¯30ç§’è§¦å‘ä¸€æ¬¡æ¸…ç†
 bool free_thread = false;
 
 std::unordered_map<std::string, std::deque<TimePoint>> playerMessageTimestamps;
 
 TimePoint lastCleanupTime = Clock::now();
-
-std::unordered_set<std::string> spamWhitelist = {
-	"admin",
-	"trustedUser1",
-	"trustedUser2"
-	// Äã¿ÉÒÔÔÚÕâÀï¼ÌĞøÌí¼Ó°×Ãûµ¥ÓÃ»§Ãû
-};
 
 
 namespace mc {
@@ -34,7 +27,7 @@ namespace mc {
 		free_thread = true;
 		while (true)
 		{
-			SendCommand(u8"tellraw @a {\"rawtext\":[{\"text\":\"»¶Ó­Ê¹ÓÃINRbot! ¸ü¶à¹¦ÄÜÔÚ1030888791!\"}]}");
+			SendCommand(u8"tellraw @a {\"rawtext\":[{\"text\":\"æ¬¢è¿ä½¿ç”¨INRbot! æ›´å¤šåŠŸèƒ½åœ¨1030888791!\"}]}");
 			Sleep(60000);
 		}
 
@@ -54,9 +47,9 @@ namespace mc {
 		char exeName[MAX_PATH] = { 0 };
 		if (GetModuleBaseNameA(hProcess, NULL, exeName, MAX_PATH)) {
 			std::string exeStr(exeName);
-			CloseHandle(hProcess);
+			CloseHandle(hProcess)
 
-			// ±È½ÏÊÇ·ñÆ¥Åä£¨²»Çø·Ö´óĞ¡Ğ´£©
+			// æ¯”è¾ƒæ˜¯å¦åŒ¹é…ï¼ˆä¸åŒºåˆ†å¤§å°å†™ï¼‰
 			for (auto& c : exeStr) c = tolower(c);
 			std::string lowerProcessName = processName;
 			for (auto& c : lowerProcessName) c = tolower(c);
@@ -71,16 +64,15 @@ namespace mc {
 	bool IsPlayerSpamming(const std::string& username) {
 
 		if (fun::GetUserPermission(username) == UserPermission::admin) {
-			return false; // ÓÀÔ¶²»ËãË¢ÆÁ
-		}
-
+			return false; // æ°¸è¿œä¸ç®—åˆ·å±
+		
 		if (fun::GetUserPermission(username) == UserPermission::bedrock) {
-			return false; // ÓÀÔ¶²»ËãË¢ÆÁ
+			return false; // æ°¸è¿œä¸ç®—åˆ·å±
 		}
 
 		TimePoint now = Clock::now();
 
-		// ÇåÀí³¤Ê±¼äÎ´»îÔ¾µÄÍæ¼Ò
+		// æ¸…ç†é•¿æ—¶é—´æœªæ´»è·ƒçš„ç©å®¶
 		if (now - lastCleanupTime > CLEANUP_INTERVAL) {
 			for (auto it = playerMessageTimestamps.begin(); it != playerMessageTimestamps.end(); ) {
 				if (it->second.empty() || now - it->second.back() > CLEANUP_THRESHOLD) {
@@ -91,11 +83,11 @@ namespace mc {
 				}
 			}
 			lastCleanupTime = now;
-		}
+		
 
 		auto& timestamps = playerMessageTimestamps[username];
 
-		// ÇåÀí¹ıÆÚ¼ÇÂ¼
+		// æ¸…ç†è¿‡æœŸè®°å½•
 		while (!timestamps.empty() && (now - timestamps.front() > TIME_WINDOW)) {
 			timestamps.pop_front();
 		}
@@ -103,7 +95,7 @@ namespace mc {
 		timestamps.push_back(now);
 
 		if (timestamps.size() > MAX_MESSAGES) {
-			// ³¬¹ıÏŞÖÆ£¬Çå³ı¼ÇÂ¼
+			// è¶…è¿‡é™åˆ¶ï¼Œæ¸…é™¤è®°å½•
 			playerMessageTimestamps.erase(username);
 			return true;
 		}
@@ -114,8 +106,8 @@ namespace mc {
 	bool IsMessageMax(const std::wstring& message, SIZE_T Max) {
 
 		if (fun::GetUserPermission(fun::WStringToString(message)) == UserPermission::admin) {
-			return false; // ÓÀÔ¶²»ËãË¢ÆÁ
-		}
+			return false; // æ°¸è¿œä¸ç®—åˆ·å±
+		
 
 		if (!g_Config.NoMaxMessageKick)
 		{
@@ -136,7 +128,7 @@ namespace mc {
 
 		constexpr size_t MAX_TEXT_LENGTH = 0x200;
 
-		fun::WriteLog(L"ÊÕµ½·¢ËÍĞÅÏ¢µÄÇëÇó " + fun::StringToWString(message));
+		fun::WriteLog(L"æ”¶åˆ°å‘é€ä¿¡æ¯çš„è¯·æ±‚ " + fun::StringToWString(message));
 
 		LRESULT state = SendMessage(hwndRadio1, BM_GETCHECK, 0, 0);
 		if (state != BST_CHECKED)
@@ -169,16 +161,16 @@ namespace mc {
 
 		char Send_can_2[80] = { 0 };
 
-		static_assert(sizeof(SendPacket) <= sizeof(Send_can_2), "½á¹¹ÌåÌ«´ó");
+		static_assert(sizeof(SendPacket) <= sizeof(Send_can_2), "ç»“æ„ä½“å¤ªå¤§");
 
 		bool tooLong = message.length() > MAX_TEXT_LENGTH;
 
-		const char* finalText = tooLong ? u8"tellraw @a {\"rawtext\":[{\"text\":\"¡ìl¡ìc´Ë´Î·¢°ü×ÖÊı¹ı¶à,ÎªÁË·ÀÖ¹»úÆ÷ÈË±»ÌßÒÑÀ¹½Ø,ÁªÏµ¹ÜÀíÔ±½â¾ö\"}]}" : message.c_str();
+		const char* finalText = tooLong ? u8"tellraw @a {\"rawtext\":[{\"text\":\"Â§lÂ§cæ­¤æ¬¡å‘åŒ…å­—æ•°è¿‡å¤š,ä¸ºäº†é˜²æ­¢æœºå™¨äººè¢«è¸¢å·²æ‹¦æˆª,è”ç³»ç®¡ç†å‘˜è§£å†³\"}]}" : message.c_str();
 		int finalLength = static_cast<int>(strlen(finalText));
 
-		// ¹¹ÔìÊı¾İ
+		// æ„é€ æ•°æ®
 		SendPacket* packet = reinterpret_cast<SendPacket*>(Send_can_2);
-		packet->text_ptr = finalText;              // Ö¸Ïò×Ö·û´®ÄÚÈİ
+		packet->text_ptr = finalText;              // æŒ‡å‘å­—ç¬¦ä¸²å†…å®¹
 		packet->unused = nullptr;
 		packet->length = finalLength;
 		packet->reserved = 0;
@@ -219,9 +211,10 @@ namespace mc {
 
 	}
 
-	// ¿í×Ö·û´®×ª UTF-8 ×Ö·û´®
+	// å®½å­—ç¬¦ä¸²è½¬ UTF-8 å­—ç¬¦ä¸²
 	std::string WStringToUTF8(const std::wstring& wstr) {
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 		return conv.to_bytes(wstr);
 	}
+
 }
