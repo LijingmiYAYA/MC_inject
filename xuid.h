@@ -3,35 +3,6 @@
 #include "mc.h"
 #include "pch.h"
 
-struct Xuid {
-    uint64_t SF0;
-    uint64_t SF1; //此处应为4000
-    uint64_t SF2; //此处应为80000000B19FD24D
-    uint64_t name_pointer;
-    uint64_t zero;
-    uint64_t name_size;
-    uint64_t name_max_size;
-    uint64_t xuid;
-    uint64_t zero2;
-    uint64_t xuid_size;
-    uint64_t xuid_max_size;
-};
-
-struct GameXuid {
-    GameXuid* next; // +0x00
-    GameXuid* prev; // +0x08
-    uint64_t SF;  //标志位 应为4000
-    uint8_t raw[0x20]; //这里应是无用数据
-    uint64_t name_pointer;
-    uint64_t zero0; //应为0
-    uint64_t name_size;
-    uint64_t name_max_size;
-    uint64_t xuid;
-    uint64_t zero2;
-    uint64_t xuid_size;
-    uint64_t xuid_max_size;
-};
-
 extern GameXuid xuid_addr;
 extern GameXuid* pXuid;
 
@@ -219,5 +190,6 @@ private:
     GameXuid aGameXuid;
     Xuid bXuid;
     GameXuid* x;
+
 
 };
